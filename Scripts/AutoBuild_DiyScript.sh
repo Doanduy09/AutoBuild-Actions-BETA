@@ -45,6 +45,7 @@ Firmware_Diy() {
 		sed -i "s/zh_cn/en/g" package/lean/default-settings/files/zzz-default-settings
 		sed -i "s/+@LUCI_LANG_zh-cn/+@LUCI_LANG_en/g" package/lean/default-settings/Makefile
 		sed -i "s/zh_cn/en/g" feeds/luci/modules/luci-base/root/etc/uci-defaults/luci-base
+		sed -i 's/luci-theme-bootstrap/luci-theme-genzpn/g' feeds/luci/collections/luci/Makefile
 EOF
 		sed -i "s?/bin/login?/usr/libexec/login.sh?g" ${FEEDS_PKG}/ttyd/files/ttyd.config
 		# sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
