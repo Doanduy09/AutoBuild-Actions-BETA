@@ -40,23 +40,18 @@ Firmware_Diy() {
 	# ${BASE_FILES}			OpenWrt 源码目录下的 package/base-files/files 目录
 
 	case "${OP_AUTHOR}/${OP_REPO}:${OP_BRANCH}" in
-	coolsnowwolf/lede:master)
-		cat >> ${Version_File} <<EOF
-sed -i '/check_signature/d' /etc/opkg.conf
-if [ -z "\$(grep "REDIRECT --to-ports 53" /etc/firewall.user 2> /dev/null)" ]
-then
-	echo '# iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
-	echo '# iptables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
-	echo '# [ -n "\$(command -v ip6tables)" ] && ip6tables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
-	echo '# [ -n "\$(command -v ip6tables)" ] && ip6tables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
-fi
-exit 0
+	GenzPN-Company-Limited/lede:master)
+		<<EOF
+		sed -i "s/zh_cn/en/g" package/lean/default-settings/files/zzz-default-settings
+		sed -i "s/+@LUCI_LANG_zh-cn/+@LUCI_LANG_en/g" package/lean/default-settings/Makefile
+		sed -i "s/zh_cn/en/g" feeds/luci/modules/luci-base/root/etc/uci-defaults/luci-base
+		sed -i 's/luci-theme-bootstrap/luci-theme-genzpn/g' feeds/luci/collections/luci/Makefile
 EOF
 		sed -i "s?/bin/login?/usr/libexec/login.sh?g" ${FEEDS_PKG}/ttyd/files/ttyd.config
 		# sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
 		# sed -i '/uci commit luci/i\uci set luci.main.mediaurlbase="/luci-static/argon-mod"' $(PKG_Finder d package default-settings)/files/zzz-default-settings
 		
-		for i in smartdns eqos mentohust minieap unblockneteasemusic
+		for i in eqos mentohust minieap unblockneteasemusic
 		do
 			AddPackage svn apps luci-app-${i} immortalwrt/luci/branches/openwrt-18.06/applications
 			sed -i 's/..\/..\//\$\(TOPDIR\)\/feeds\/luci\//g' ${WORK}/package/apps/luci-app-${i}/Makefile
@@ -70,6 +65,7 @@ EOF
 		AddPackage git other luci-app-ikoolproxy iwrt main
 		AddPackage git other helloworld fw876 master
 		AddPackage git themes luci-theme-neobird thinktip main
+		AddPackage git other luci-app-smartdns pymumu lede
 
 		case "${TARGET_BOARD}" in
 		ramips)
@@ -89,6 +85,7 @@ EOF
 			rm -rf packages/lean/autocore
 			AddPackage git lean autocore-modify Hyy2001X master
 			sed -i -- 's:/bin/ash:'/bin/bash':g' ${BASE_FILES}/etc/passwd
+			# sed -i "s?6.0?5.19?g" ${WORK}/target/linux/x86/Makefile
 		;;
 		esac
 	;;
